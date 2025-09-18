@@ -1,74 +1,144 @@
-import osimport os
+import osimport osimport os
 
-import streamlit as stimport streamlit as st
+import streamlit as st
 
-import pandas as pdimport pandas as pd
+import pandas as pdimport streamlit as stimport streamlit as st
 
-import matplotlib.pyplot as pltimport matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
-import seaborn as snsimport seaborn as sns
+import seaborn as snsimport pandas as pdimport pandas as pd
 
-import google.generativeai as genaiimport google.generativeai as genai
+import google.generativeai as genai
 
-from PIL import Image as PILImagefrom PIL import Image as PILImage
+from PIL import Image as PILImageimport matplotlib.pyplot as pltimport matplotlib.pyplot as plt
 
-import numpy as npimport numpy as np
+import numpy as np
 
-import cv2import cv2
+import cv2import seaborn as snsimport seaborn as sns
 
 from dotenv import load_dotenv
 
+import google.generativeai as genaiimport google.generativeai as genai
+
 # Load environment variables
 
-# Load environment variablesfrom dotenv import load_dotenv
+load_dotenv()from PIL import Image as PILImagefrom PIL import Image as PILImage
 
-load_dotenv()load_dotenv()
 
-        try:
 
-# Configure page            if package == 'opencv-python':
+# Configure pageimport numpy as npimport numpy as np
 
-st.set_page_config(                __import__('cv2')
+st.set_page_config(
 
-    page_title="AI Fitness Health Analyzer",            elif package == 'Pillow':
+    page_title="AI Fitness Health Analyzer",import cv2import cv2
 
-    page_icon="🏃‍♂️",                __import__('PIL')
+    page_icon="🏃‍♂️",
 
-    layout="wide"            elif package == 'scikit-learn':
+    layout="wide"from dotenv import load_dotenv
 
-)                __import__('sklearn')
+)
 
-            elif package == 'python-dotenv':
+# Load environment variables
 
-# Configure Gemini API                __import__('dotenv')
+# Configure Gemini API
 
-GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]            elif package == 'replicate':
+GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]# Load environment variablesfrom dotenv import load_dotenv
 
-genai.configure(api_key=GEMINI_API_KEY)                __import__('replicate')
+genai.configure(api_key=GEMINI_API_KEY)
 
-model = genai.GenerativeModel('gemini-1.5-flash')            else:
+model = genai.GenerativeModel('gemini-1.5-flash')load_dotenv()load_dotenv()
 
-                __import__(package)
 
-def main():        except ImportError:
 
-    st.title("🏃‍♂️ AI Fitness Health Analyzer")            missing_packages.append(package)
+def main():        try:
 
-    st.markdown("""    
+    st.title("🏃‍♂️ AI Fitness Health Analyzer")
 
-    Upload your fitness summary image and get AI-powered health insights and recommendations.    if missing_packages:
+    st.markdown("""# Configure page            if package == 'opencv-python':
 
-    """)        print(f"Missing packages: {', '.join(missing_packages)}")
+    Upload your fitness summary image and get AI-powered health insights and recommendations.
 
-        print("Installing missing packages automatically...")
+    """)st.set_page_config(                __import__('cv2')
 
-    uploaded_file = st.file_uploader("Choose a fitness summary image", type=['jpg', 'jpeg', 'png'])        for package in missing_packages:
 
-                print(f"Installing {package}...")
+
+    uploaded_file = st.file_uploader("Choose a fitness summary image", type=['jpg', 'jpeg', 'png'])    page_title="AI Fitness Health Analyzer",            elif package == 'Pillow':
+
+    
+
+    if uploaded_file is not None:    page_icon="🏃‍♂️",                __import__('PIL')
+
+        # Display uploaded image
+
+        image = PILImage.open(uploaded_file)    layout="wide"            elif package == 'scikit-learn':
+
+        st.image(image, caption='Uploaded Image', use_column_width=True)
+
+        )                __import__('sklearn')
+
+        if st.button('Analyze Image'):
+
+            with st.spinner('Analyzing your fitness data...'):            elif package == 'python-dotenv':
+
+                try:
+
+                    # Convert image for Gemini# Configure Gemini API                __import__('dotenv')
+
+                    response = model.generate_content([
+
+                        "Analyze this fitness summary image and extract the following metrics:\n"GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]            elif package == 'replicate':
+
+                        "- Steps count\n"
+
+                        "- Calories burned\n"genai.configure(api_key=GEMINI_API_KEY)                __import__('replicate')
+
+                        "- Distance covered\n"
+
+                        "- Activity duration\n"model = genai.GenerativeModel('gemini-1.5-flash')            else:
+
+                        "Provide the data in a structured format.",
+
+                        image                __import__(package)
+
+                    ])
+
+                    def main():        except ImportError:
+
+                    # Display results
+
+                    st.subheader("📊 Analysis Results")    st.title("🏃‍♂️ AI Fitness Health Analyzer")            missing_packages.append(package)
+
+                    st.write(response.text)
+
+                        st.markdown("""    
+
+                    # Generate health insights
+
+                    st.subheader("💡 Health Insights")    Upload your fitness summary image and get AI-powered health insights and recommendations.    if missing_packages:
+
+                    insights_response = model.generate_content([
+
+                        "Based on this fitness data, provide 3-4 specific health insights and recommendations."    """)        print(f"Missing packages: {', '.join(missing_packages)}")
+
+                        "Format them as bullet points.",
+
+                        response.text        print("Installing missing packages automatically...")
+
+                    ])
+
+                    st.write(insights_response.text)    uploaded_file = st.file_uploader("Choose a fitness summary image", type=['jpg', 'jpeg', 'png'])        for package in missing_packages:
+
+                    
+
+                except Exception as e:                print(f"Installing {package}...")
+
+                    st.error(f"An error occurred during analysis: {str(e)}")
 
     if uploaded_file is not None:            try:
 
-        # Display uploaded image                install_package(package)
+if __name__ == "__main__":
+
+    main()        # Display uploaded image                install_package(package)
 
         image = PILImage.open(uploaded_file)                print(f"✅ {package} installed successfully!")
 

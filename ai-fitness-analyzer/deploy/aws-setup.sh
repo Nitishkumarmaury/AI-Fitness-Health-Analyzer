@@ -1,0 +1,1 @@
+   Write-Host "🏗️ Creating ECR repository..." -ForeegroundColor Yellow

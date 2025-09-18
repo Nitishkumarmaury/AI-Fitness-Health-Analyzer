@@ -1,0 +1,1 @@
+     docker tag "$ECR_REPOSITORY:latest" "$fullEcrUri"

@@ -1,13 +1,15 @@
-﻿import sys
-import subprocess
-import os
+﻿import streamlit as st
 
-def install_package(package):
-    """Install a package using pip"""
-    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+# Must be the first Streamlit command
+st.set_page_config(
+    page_title="AI Fitness Health Analyzer",
+    page_icon="",
+    layout="wide"
+)
 
-def check_and_install_requirements():
-    """Check if required packages are installed and install if missing"""
+@st.cache_data
+def healthcheck():
+    return {"status": "healthy"}
     required_packages = [
         'streamlit', 'opencv-python', 'pytesseract', 'Pillow', 
         'numpy', 'pandas', 'scikit-learn', 'python-dotenv', 

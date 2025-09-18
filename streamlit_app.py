@@ -1,86 +1,160 @@
-﻿import streamlit as st
+﻿import streamlit as stimport streamlit as st
 
-# Must be the first Streamlit command
-st.set_page_config(
-    page_title="AI Fitness Health Analyzer",
-    page_icon="📊",
-    layout="wide"
-)
 
-import os
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import google.generativeai as genai
-from PIL import Image as PILImage
-import numpy as np
-import cv2
-from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
+# Must be the first Streamlit command# Must be the first Streamlit command
 
-@st.cache_data
-def healthcheck():
-    return {"status": "healthy"}
+st.set_page_config(st.set_page_config(
+
+    page_title="AI Fitness Health Analyzer",    page_title="AI Fitness Health Analyzer",
+
+    page_icon="📊",    page_icon="📊",
+
+    layout="wide"    layout="wide"
+
+))
+
+
+
+import osimport os
+
+from PIL import Imagefrom PIL import Image
+
+from dotenv import load_dotenvfrom dotenv import load_dotenv
+
+from image_processor import ImageProcessorfrom image_processor import ImageProcessor
+
+from health_analyzer import HealthAnalyzerfrom health_analyzer import HealthAnalyzer
+
+
+
+# Load environment variables# Load environment variables
+
+load_dotenv()load_dotenv()
+
+
+
+@st.cache_data@st.cache_data
+
+def healthcheck():def healthcheck():
+
+    return {"status": "healthy"}    return {"status": "healthy"}
+
     required_packages = [
-        'streamlit', 'opencv-python', 'pytesseract', 'Pillow', 
-        'numpy', 'pandas', 'scikit-learn', 'python-dotenv', 
-        'matplotlib', 'seaborn', 'google-generativeai'
-    ]
-    
-    missing_packages = []
-    
-    for package in required_packages:
-        try:
-            if package == 'opencv-python':
-                __import__('cv2')
-            elif package == 'Pillow':
-                __import__('PIL')
-            elif package == 'scikit-learn':
-                __import__('sklearn')
-            elif package == 'python-dotenv':
-                __import__('dotenv')
-            elif package == 'replicate':
-                __import__('replicate')
-            else:
-                __import__(package)
-        except ImportError:
-            missing_packages.append(package)
-    
-    if missing_packages:
-        print(f"Missing packages: {', '.join(missing_packages)}")
-        print("Installing missing packages automatically...")
-        for package in missing_packages:
-            print(f"Installing {package}...")
-            try:
-                install_package(package)
-                print(f"✅ {package} installed successfully!")
-            except Exception as e:
-                print(f"❌ Failed to install {package}: {e}")
-        
-        # Special handling for replicate
-        if 'replicate' in missing_packages:
-            print("\n🔄 Installing Replicate API client...")
-            try:
-                subprocess.check_call([sys.executable, "-m", "pip", "install", "replicate", "--upgrade"])
-                print("✅ Replicate installed successfully!")
-            except Exception as e:
-                print(f"❌ Replicate installation failed: {e}")
-                print("💡 Try manually: pip install replicate")
-        
-        print("\nInstallation complete! Please restart with: streamlit run main.py")
-        return False
-    return True
 
-def load_gemini_credentials():
-    """Load Google Gemini API key from environment variable"""
-    api_key = os.getenv('GEMINI_API_KEY')
-    if not api_key:
-        raise ValueError("GEMINI_API_KEY environment variable is not set")
+def main():        'streamlit', 'opencv-python', 'pytesseract', 'Pillow', 
+
+    # Handle health check endpoint        'numpy', 'pandas', 'scikit-learn', 'python-dotenv', 
+
+    if st.experimental_get_query_params().get("healthz"):        'matplotlib', 'seaborn', 'google-generativeai'
+
+        st.json(healthcheck())    ]
+
+        return    
+
+    missing_packages = []
+
+    st.title("AI Fitness Health Analyzer")    
+
+    st.markdown("""    for package in required_packages:
+
+    Upload your fitness summary image and get AI-powered health insights and recommendations.        try:
+
+    """)            if package == 'opencv-python':
+
+                    __import__('cv2')
+
+    api_key = st.secrets["GEMINI_API_KEY"]            elif package == 'Pillow':
+
+    if not api_key:                __import__('PIL')
+
+        st.error("Gemini API key not found in secrets!")            elif package == 'scikit-learn':
+
+        return                __import__('sklearn')
+
+                elif package == 'python-dotenv':
+
+    analyzer = HealthAnalyzer(api_key)                __import__('dotenv')
+
+                elif package == 'replicate':
+
+    uploaded_file = st.file_uploader("Choose a fitness summary image", type=["jpg", "jpeg", "png"])                __import__('replicate')
+
+                else:
+
+    if uploaded_file:                __import__(package)
+
+        try:        except ImportError:
+
+            image = Image.open(uploaded_file)            missing_packages.append(package)
+
+            st.image(image, caption="Uploaded Image", use_column_width=True)    
+
+                if missing_packages:
+
+            if st.button("Analyze Image"):        print(f"Missing packages: {', '.join(missing_packages)}")
+
+                with st.spinner("Processing image..."):        print("Installing missing packages automatically...")
+
+                    # Extract text from image        for package in missing_packages:
+
+                    text = ImageProcessor.extract_text(image)            print(f"Installing {package}...")
+
+                                try:
+
+                    if text:                install_package(package)
+
+                        # Extract metrics from text                print(f"✅ {package} installed successfully!")
+
+                        metrics = ImageProcessor.extract_metrics(text)            except Exception as e:
+
+                                        print(f"❌ Failed to install {package}: {e}")
+
+                        st.subheader("📊 Extracted Metrics")        
+
+                        for key, value in metrics.items():        # Special handling for replicate
+
+                            if value:        if 'replicate' in missing_packages:
+
+                                st.write(f"**{key.title()}:** {value}")            print("\n🔄 Installing Replicate API client...")
+
+                                    try:
+
+                        # Generate health insights                subprocess.check_call([sys.executable, "-m", "pip", "install", "replicate", "--upgrade"])
+
+                        insights = analyzer.analyze_metrics(metrics)                print("✅ Replicate installed successfully!")
+
+                                    except Exception as e:
+
+                        st.subheader("💡 Health Insights")                print(f"❌ Replicate installation failed: {e}")
+
+                        st.write(insights)                print("💡 Try manually: pip install replicate")
+
+                                
+
+                        # Generate recommendations        print("\nInstallation complete! Please restart with: streamlit run main.py")
+
+                        recommendations = analyzer.get_personalized_recommendations(metrics)        return False
+
+                            return True
+
+                        st.subheader("🎯 Recommendations")
+
+                        st.write(recommendations)def load_gemini_credentials():
+
+                    else:    """Load Google Gemini API key from environment variable"""
+
+                        st.error("Could not extract text from the image. Please try a clearer image.")    api_key = os.getenv('GEMINI_API_KEY')
+
+        except Exception as e:    if not api_key:
+
+            st.error(f"Error processing image: {str(e)}")        raise ValueError("GEMINI_API_KEY environment variable is not set")
+
     return api_key
 
-try:
+if __name__ == "__main__":
+
+    main()try:
     import streamlit as st
     import pandas as pd
     import matplotlib.pyplot as plt

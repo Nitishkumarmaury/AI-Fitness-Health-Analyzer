@@ -3,9 +3,22 @@
 # Must be the first Streamlit command
 st.set_page_config(
     page_title="AI Fitness Health Analyzer",
-    page_icon="",
+    page_icon="📊",
     layout="wide"
 )
+
+import os
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import google.generativeai as genai
+from PIL import Image as PILImage
+import numpy as np
+import cv2
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 @st.cache_data
 def healthcheck():

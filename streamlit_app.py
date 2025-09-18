@@ -1,214 +1,80 @@
-import osimport osimport os
+﻿import sys
+import subprocess
+import os
 
-import streamlit as st
+def install_package(package):
+    """Install a package using pip"""
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
-import pandas as pdimport streamlit as stimport streamlit as st
-
-import matplotlib.pyplot as plt
-
-import seaborn as snsimport pandas as pdimport pandas as pd
-
-import google.generativeai as genai
-
-from PIL import Image as PILImageimport matplotlib.pyplot as pltimport matplotlib.pyplot as plt
-
-import numpy as np
-
-import cv2import seaborn as snsimport seaborn as sns
-
-from dotenv import load_dotenv
-
-import google.generativeai as genaiimport google.generativeai as genai
-
-# Load environment variables
-
-load_dotenv()from PIL import Image as PILImagefrom PIL import Image as PILImage
-
-
-
-# Configure pageimport numpy as npimport numpy as np
-
-st.set_page_config(
-
-    page_title="AI Fitness Health Analyzer",import cv2import cv2
-
-    page_icon="🏃‍♂️",
-
-    layout="wide"from dotenv import load_dotenv
-
-)
-
-# Load environment variables
-
-# Configure Gemini API
-
-GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]# Load environment variablesfrom dotenv import load_dotenv
-
-genai.configure(api_key=GEMINI_API_KEY)
-
-model = genai.GenerativeModel('gemini-1.5-flash')load_dotenv()load_dotenv()
-
-
-
-def main():        try:
-
-    st.title("🏃‍♂️ AI Fitness Health Analyzer")
-
-    st.markdown("""# Configure page            if package == 'opencv-python':
-
-    Upload your fitness summary image and get AI-powered health insights and recommendations.
-
-    """)st.set_page_config(                __import__('cv2')
-
-
-
-    uploaded_file = st.file_uploader("Choose a fitness summary image", type=['jpg', 'jpeg', 'png'])    page_title="AI Fitness Health Analyzer",            elif package == 'Pillow':
-
+def check_and_install_requirements():
+    """Check if required packages are installed and install if missing"""
+    required_packages = [
+        'streamlit', 'opencv-python', 'pytesseract', 'Pillow', 
+        'numpy', 'pandas', 'scikit-learn', 'python-dotenv', 
+        'matplotlib', 'seaborn', 'google-generativeai'
+    ]
     
-
-    if uploaded_file is not None:    page_icon="🏃‍♂️",                __import__('PIL')
-
-        # Display uploaded image
-
-        image = PILImage.open(uploaded_file)    layout="wide"            elif package == 'scikit-learn':
-
-        st.image(image, caption='Uploaded Image', use_column_width=True)
-
-        )                __import__('sklearn')
-
-        if st.button('Analyze Image'):
-
-            with st.spinner('Analyzing your fitness data...'):            elif package == 'python-dotenv':
-
-                try:
-
-                    # Convert image for Gemini# Configure Gemini API                __import__('dotenv')
-
-                    response = model.generate_content([
-
-                        "Analyze this fitness summary image and extract the following metrics:\n"GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]            elif package == 'replicate':
-
-                        "- Steps count\n"
-
-                        "- Calories burned\n"genai.configure(api_key=GEMINI_API_KEY)                __import__('replicate')
-
-                        "- Distance covered\n"
-
-                        "- Activity duration\n"model = genai.GenerativeModel('gemini-1.5-flash')            else:
-
-                        "Provide the data in a structured format.",
-
-                        image                __import__(package)
-
-                    ])
-
-                    def main():        except ImportError:
-
-                    # Display results
-
-                    st.subheader("📊 Analysis Results")    st.title("🏃‍♂️ AI Fitness Health Analyzer")            missing_packages.append(package)
-
-                    st.write(response.text)
-
-                        st.markdown("""    
-
-                    # Generate health insights
-
-                    st.subheader("💡 Health Insights")    Upload your fitness summary image and get AI-powered health insights and recommendations.    if missing_packages:
-
-                    insights_response = model.generate_content([
-
-                        "Based on this fitness data, provide 3-4 specific health insights and recommendations."    """)        print(f"Missing packages: {', '.join(missing_packages)}")
-
-                        "Format them as bullet points.",
-
-                        response.text        print("Installing missing packages automatically...")
-
-                    ])
-
-                    st.write(insights_response.text)    uploaded_file = st.file_uploader("Choose a fitness summary image", type=['jpg', 'jpeg', 'png'])        for package in missing_packages:
-
-                    
-
-                except Exception as e:                print(f"Installing {package}...")
-
-                    st.error(f"An error occurred during analysis: {str(e)}")
-
-    if uploaded_file is not None:            try:
-
-if __name__ == "__main__":
-
-    main()        # Display uploaded image                install_package(package)
-
-        image = PILImage.open(uploaded_file)                print(f"✅ {package} installed successfully!")
-
-        st.image(image, caption='Uploaded Image', use_column_width=True)            except Exception as e:
-
-                        print(f"❌ Failed to install {package}: {e}")
-
-        if st.button('Analyze Image'):        
-
-            with st.spinner('Analyzing your fitness data...'):        # Special handling for replicate
-
-                try:        if 'replicate' in missing_packages:
-
-                    # Convert image for Gemini            print("\n🔄 Installing Replicate API client...")
-
-                    response = model.generate_content([            try:
-
-                        "Analyze this fitness summary image and extract the following metrics:\n"                subprocess.check_call([sys.executable, "-m", "pip", "install", "replicate", "--upgrade"])
-
-                        "- Steps count\n"                print("✅ Replicate installed successfully!")
-
-                        "- Calories burned\n"            except Exception as e:
-
-                        "- Distance covered\n"                print(f"❌ Replicate installation failed: {e}")
-
-                        "- Activity duration\n"                print("💡 Try manually: pip install replicate")
-
-                        "Provide the data in a structured format.",        
-
-                        image        print("\nInstallation complete! Please restart with: streamlit run main.py")
-
-                    ])        return False
-
-                        return True
-
-                    # Display results
-
-                    st.subheader("📊 Analysis Results")def load_gemini_credentials():
-
-                    st.write(response.text)    """Load Google Gemini API key from environment variable"""
-
-                        api_key = os.getenv('GEMINI_API_KEY')
-
-                    # Generate health insights    if not api_key:
-
-                    st.subheader("💡 Health Insights")        raise ValueError("GEMINI_API_KEY environment variable is not set")
-
-                    insights_response = model.generate_content([    return api_key
-
-                        "Based on this fitness data, provide 3-4 specific health insights and recommendations."
-
-                        "Format them as bullet points.",try:
-
-                        response.text    import streamlit as st
-
-                    ])    import pandas as pd
-
-                    st.write(insights_response.text)    import matplotlib.pyplot as plt
-
-                        import seaborn as sns
-
-                except Exception as e:    from image_processor import ImageProcessor
-
-                    st.error(f"An error occurred during analysis: {str(e)}")    from health_analyzer import HealthAnalyzer
-
+    missing_packages = []
     
+    for package in required_packages:
+        try:
+            if package == 'opencv-python':
+                __import__('cv2')
+            elif package == 'Pillow':
+                __import__('PIL')
+            elif package == 'scikit-learn':
+                __import__('sklearn')
+            elif package == 'python-dotenv':
+                __import__('dotenv')
+            elif package == 'replicate':
+                __import__('replicate')
+            else:
+                __import__(package)
+        except ImportError:
+            missing_packages.append(package)
+    
+    if missing_packages:
+        print(f"Missing packages: {', '.join(missing_packages)}")
+        print("Installing missing packages automatically...")
+        for package in missing_packages:
+            print(f"Installing {package}...")
+            try:
+                install_package(package)
+                print(f"✅ {package} installed successfully!")
+            except Exception as e:
+                print(f"❌ Failed to install {package}: {e}")
+        
+        # Special handling for replicate
+        if 'replicate' in missing_packages:
+            print("\n🔄 Installing Replicate API client...")
+            try:
+                subprocess.check_call([sys.executable, "-m", "pip", "install", "replicate", "--upgrade"])
+                print("✅ Replicate installed successfully!")
+            except Exception as e:
+                print(f"❌ Replicate installation failed: {e}")
+                print("💡 Try manually: pip install replicate")
+        
+        print("\nInstallation complete! Please restart with: streamlit run main.py")
+        return False
+    return True
 
-if __name__ == "__main__":    # Load Google Gemini API key early
+def load_gemini_credentials():
+    """Load Google Gemini API key from environment variable"""
+    api_key = os.getenv('GEMINI_API_KEY')
+    if not api_key:
+        raise ValueError("GEMINI_API_KEY environment variable is not set")
+    return api_key
 
-    main()    GEMINI_API_KEY = load_gemini_credentials()
+try:
+    import streamlit as st
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    from image_processor import ImageProcessor
+    from health_analyzer import HealthAnalyzer
+    
+    # Load Google Gemini API key early
+    GEMINI_API_KEY = load_gemini_credentials()
     
     # Google Gemini setup instead of Replicate
     try:

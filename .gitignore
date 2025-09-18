@@ -32,3 +32,7 @@ awscliv2.zip
 
 # Local development
 *.local
+
+# Temporary files
+temp_image.jpg
+*.tmp

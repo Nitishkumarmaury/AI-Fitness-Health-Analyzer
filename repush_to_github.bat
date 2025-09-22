@@ -1,35 +1,35 @@
 @echo off
-echo ===== AI Fitness Health Analyzer - Re-Push to GitHub =====
+echo ===== AI Fitness Health Analyzer - Updated Re-Push to GitHub =====
 echo.
 
-REM Check if git is installed
-git --version >nul 2>&1
-if %errorlevel% neq 0 (
-    echo Error: Git is not installed or not in your PATH.
-    echo Please install Git from https://git-scm.com/
-    pause
-    exit /b 1
-)
-
-REM Check if we're in a git repository
-if not exist .git (
-    echo Error: Not a git repository.
-    echo Please run push_to_github.bat first to initialize the repository.
-    pause
-    exit /b 1
-)
-
-echo Current repository status:
-git status --porcelain
-
-echo.
-echo Adding all changes to git...
+REM Adding all changes
 git add .
 
-echo.
-echo Checking for changes to commit...
-git diff --cached --quiet
-if %errorlevel% neq 0 (
+REM Create commit with latest changes
+git commit -m "🚀 Fix Streamlit Cloud deployment - Updated secrets handling and main app"
+
+REM Force push the updates
+git push --force-with-lease origin main
+
+if %errorlevel% equ 0 (
+    echo.
+    echo ✅ Successfully updated GitHub repository!
+    echo.
+    echo 🌐 Repository: https://github.com/Nitishkumarmaury/AI-Fitness-Health-Analyzers
+    echo.
+    echo 📋 Next Steps for Streamlit Cloud:
+    echo 1. Go to your app dashboard: https://share.streamlit.io
+    echo 2. Your app should restart automatically with the updates
+    echo 3. Add your API key in app settings → Secrets:
+    echo    GEMINI_API_KEY = "your_actual_api_key_here"
+    echo.
+    echo ⚡ Your app URL: https://ai-fitness-health-analyzers.streamlit.app
+    echo.
+) else (
+    echo ❌ Failed to push updates
+)
+
+pause
     echo Creating commit with latest changes...
     set /p commit_message="Enter commit message (or press Enter for default): "
     

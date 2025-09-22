@@ -2,41 +2,41 @@
 import os
 import sys
 import subprocess
-import webbrowser
-import time
-from pathlib import Path
-
-def check_streamlit():
-    """Check if streamlit is installed"""
-    try:
-        import streamlit
-        return True
-    except ImportError:
-        return False
-
-def install_streamlit():
-    """Install streamlit if not present"""
-    print("Installing Streamlit...")
-    try:
-        subprocess.run([sys.executable, "-m", "pip", "install", "streamlit"], check=True)
-        return True
-    except subprocess.CalledProcessError:
-        print("Failed to install Streamlit.")
-        return False
+import streamlit as st
 
 def main():
     """Run the Streamlit version of the application"""
-    print("=" * 60)
-    print("  AI Fitness Health Analyzer - Streamlit Version")
-    print("=" * 60)
-    print()
     
-    # Check for .env file
-    if not os.path.exists('.env'):
-        print("Warning: .env file not found.")
-        print("Creating a template .env file. Please edit it with your actual API key.")
-        with open('.env', 'w') as f:
-            f.write("GEMINI_API_KEY=your_api_key_here\n")
+    # For Streamlit Cloud, we don't need to check for .env files
+    # since secrets are handled through Streamlit's secrets management
+    
+    # Check if running on Streamlit Cloud
+    if "STREAMLIT_SHARING" in os.environ or "streamlit.app" in os.environ.get("HOSTNAME", ""):
+        print("Running on Streamlit Cloud - using Streamlit secrets")
+    else:
+        # Local development - check for .env file
+        if not os.path.exists('.env'):
+            print("Warning: .env file not found.")
+            print("For local development, create a .env file with:")
+            print("GEMINI_API_KEY=your_api_key_here")
+            print()
+            print("For Streamlit Cloud, add your API key in the app secrets.")
+    
+    # Check if streamlit is installed
+    try:
+        import streamlit
+        print("Streamlit is available")
+    except ImportError:
+        print("Installing Streamlit...")
+        subprocess.run([sys.executable, "-m", "pip", "install", "streamlit"], check=True)
+    
+    # Run the app directly (for Streamlit Cloud this will execute app.py)
+    if __name__ == "__main__":
+        # This will be called by Streamlit Cloud
+        exec(open('app.py').read())
+
+if __name__ == "__main__":
+    main()
         print("Please edit the .env file with your API key before continuing.")
         input("Press Enter when you've added your API key...")
     

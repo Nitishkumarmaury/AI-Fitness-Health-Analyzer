@@ -1,0 +1,22 @@
+runtime: python311
+
+env_variables:
+  GEMINI_API_KEY: "your_api_key_here"
+
+automatic_scaling:
+  min_instances: 0
+  max_instances: 5
+
+handlers:
+- url: /static
+  static_dir: frontend/build/static
+  secure: always
+
+- url: /(.*\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot))$
+  static_files: frontend/build/\1
+  upload: frontend/build/.*\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$
+  secure: always
+
+- url: /.*
+  script: auto
+  secure: always

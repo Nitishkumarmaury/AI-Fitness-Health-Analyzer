@@ -22,10 +22,37 @@ st.set_page_config(
     layout="wide"
 )
 
+# Get API key from Streamlit secrets or environment variables
+def get_api_key():
+    try:
+        # Try Streamlit secrets first (for cloud deployment)
+        return st.secrets["GEMINI_API_KEY"]
+    except (KeyError, FileNotFoundError):
+        # Fall back to environment variable (for local development)
+        return os.environ.get("GEMINI_API_KEY")
+
 # Check if API key is available
-if not os.environ.get("GEMINI_API_KEY"):
-    st.error("GEMINI_API_KEY is not set. Please set it as an environment variable.")
+api_key = get_api_key()
+if not api_key:
+    st.error("🔑 GEMINI_API_KEY is not set!")
+    st.markdown("""
+    ### How to add your API key:
+    
+    **For Streamlit Cloud:**
+    1. Go to your app settings
+    2. Navigate to "Secrets" tab
+    3. Add: `GEMINI_API_KEY = "your_api_key_here"`
+    
+    **For local development:**
+    1. Create `.streamlit/secrets.toml` file
+    2. Add: `GEMINI_API_KEY = "your_api_key_here"`
+    
+    **Get your API key:** [Google AI Studio](https://makersuite.google.com/app/apikey)
+    """)
     st.stop()
+
+# Set the API key in environment for the modules
+os.environ["GEMINI_API_KEY"] = api_key
 
 # App title and description
 st.title("AI Fitness Health Analyzer")

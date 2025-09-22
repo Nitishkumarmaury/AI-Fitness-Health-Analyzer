@@ -35,6 +35,9 @@ venv.bak/
 .env.test.local
 .env.production.local
 
+# Streamlit secrets
+.streamlit/secrets.toml
+
 # Database
 *.db
 *.sqlite

@@ -31,7 +31,7 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/upload" element={<UploadPage />} />
               <Route path="/dashboard/:id" element={<DashboardPage />} />
-              <Route path="/history" element={<HistoryPage />} />
+              {/* History route removed */}
               <Route path="/about" element={<AboutPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>

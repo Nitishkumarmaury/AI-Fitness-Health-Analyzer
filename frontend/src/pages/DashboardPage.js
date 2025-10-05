@@ -48,21 +48,7 @@ const DashboardPage = () => {
   const [data, setData] = useState(null);
   const [tabValue, setTabValue] = useState(0);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`/api/history/${id}`);
-        setData(response.data);
-      } catch (err) {
-        setError('Failed to load analysis data. Please try again.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [id]);
+  // History API call removed. You may need to refactor this page to use analysis data from another source.
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);

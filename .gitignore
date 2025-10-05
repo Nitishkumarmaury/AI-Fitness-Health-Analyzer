@@ -1,3 +1,4 @@
+# Remove history feature from frontend
 # Python
 __pycache__/
 *.py[cod]

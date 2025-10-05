@@ -15,6 +15,7 @@ import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 const pages = [
   { title: 'Home', path: '/' },
   { title: 'Upload', path: '/upload' },
+  { title: 'History', path: '/history' },
   { title: 'About', path: '/about' }
 ];
 

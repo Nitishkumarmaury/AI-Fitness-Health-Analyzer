@@ -1,14 +1,32 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { getMetricsSummary } from '../utils/api';
+import { getHistory, getMetricsSummary } from '../utils/api';
 
 // Create context
 const AppContext = createContext();
 
 // Context provider component
 export const AppProvider = ({ children }) => {
+  const [history, setHistory] = useState([]);
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [lastRefresh, setLastRefresh] = useState(null);
+
+  // Load history from API
+  const loadHistory = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getHistory();
+      setHistory(data);
+      setLastRefresh(new Date());
+    } catch (err) {
+      setError(err.toString());
+      console.error('Error loading history:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Load metrics summary
   const loadMetrics = async () => {
@@ -21,11 +39,11 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  // Refresh all data (history removed)
+  // Refresh all data
   const refreshData = async () => {
     setLoading(true);
     try {
-      await loadMetrics();
+      await Promise.all([loadHistory(), loadMetrics()]);
     } finally {
       setLoading(false);
     }
@@ -33,15 +51,19 @@ export const AppProvider = ({ children }) => {
 
   // Load data on initial mount
   useEffect(() => {
+    loadHistory();
     loadMetrics();
   }, []);
 
   // Create context value
   const contextValue = {
+    history,
     metrics,
     loading,
     error,
+    lastRefresh,
     refreshData,
+    loadHistory,
     loadMetrics
   };
 

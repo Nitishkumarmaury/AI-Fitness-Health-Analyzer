@@ -65,7 +65,10 @@ const BenefitItem = ({ text }) => (
 
 const HomePage = () => {
   const navigate = useNavigate();
-  // History context removed
+  const { history } = useAppContext();
+  
+  // Count analyzed images
+  const analyzedCount = history?.length || 0;
   
   return (
     <Box>

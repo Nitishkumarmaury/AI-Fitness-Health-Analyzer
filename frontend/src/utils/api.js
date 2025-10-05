@@ -28,7 +28,25 @@ export const analyzeImage = async (imageFile) => {
   }
 };
 
-// History API methods removed
+export const getHistory = async () => {
+  try {
+    const response = await api.get('/api/history');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching history:', error);
+    throw error.response?.data?.error || 'Error fetching history. Please try again.';
+  }
+};
+
+export const getHistoryEntry = async (id) => {
+  try {
+    const response = await api.get(`/api/history/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching history entry ${id}:`, error);
+    throw error.response?.data?.error || 'Error fetching analysis details. Please try again.';
+  }
+};
 
 export const getMetricsSummary = async () => {
   try {

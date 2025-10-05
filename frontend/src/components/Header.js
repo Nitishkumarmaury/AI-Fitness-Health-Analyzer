@@ -32,10 +32,10 @@ function Header() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" elevation={0} sx={{ background: 'linear-gradient(90deg, #6C63FF 0%, #FF6584 100%)', boxShadow: '0 2px 12px rgba(108,99,255,0.10)' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <FitnessCenterIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <FitnessCenterIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, color: '#FFD86E', fontSize: 32 }} />
           <Typography
             variant="h6"
             noWrap
@@ -44,11 +44,12 @@ function Header() {
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
+              fontFamily: 'Poppins',
               fontWeight: 700,
               letterSpacing: '.2rem',
-              color: 'inherit',
+              color: '#FFD86E',
               textDecoration: 'none',
+              fontSize: '1.6rem',
             }}
           >
             AI Fitness Health Analyzer
@@ -129,9 +130,14 @@ function Header() {
                 onClick={handleCloseNavMenu}
                 sx={{ 
                   my: 2, 
-                  color: 'white', 
-                  display: 'block',
-                  backgroundColor: location.pathname === page.path ? 'rgba(255, 255, 255, 0.2)' : 'transparent'
+                  mx: 1,
+                  color: location.pathname === page.path ? '#6C63FF' : '#fff',
+                  backgroundColor: location.pathname === page.path ? '#FFD86E' : 'transparent',
+                  fontWeight: 600,
+                  borderRadius: 8,
+                  boxShadow: location.pathname === page.path ? '0 2px 8px #FFD86E' : 'none',
+                  transition: 'all 0.2s',
+                  fontFamily: 'Poppins',
                 }}
               >
                 {page.title}

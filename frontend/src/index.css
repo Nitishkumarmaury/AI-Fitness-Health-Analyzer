@@ -1,27 +1,90 @@
+/* Animated gradient background for body */
+body {
+  background: linear-gradient(270deg, #E0C3FC, #FFD86E, #FF6584, #6C63FF);
+  background-size: 800% 800%;
+  animation: gradientMove 18s ease infinite;
+}
+
+@keyframes gradientMove {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+
+/* Card hover effect */
+.MuiCard-root:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 12px 32px rgba(255,101,132,0.18);
+  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
+
+/* Button animated gradient */
+.MuiButton-root {
+  background: linear-gradient(90deg, #6C63FF 0%, #FF6584 100%);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+.MuiButton-root:hover {
+  background: linear-gradient(90deg, #FFD86E 0%, #FF6584 100%);
+  box-shadow: 0 4px 16px #FFD86E;
+}
+
+/* Add fade-in animation for main content */
+.fade-in {
+  animation: fadeIn 1.2s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Poppins', 'Roboto', 'Segoe UI', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  background: linear-gradient(135deg, #F9F9F9 0%, #E0C3FC 100%);
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
 .markdown-content h3 {
   font-size: 1.2rem;
-  font-weight: 500;
+  font-weight: 600;
   margin-top: 1.5rem;
   margin-bottom: 0.5rem;
-  color: #2E7D32;
+  color: #6C63FF;
 }
 
 .markdown-content li {
   margin-bottom: 0.5rem;
   list-style-type: disc;
   margin-left: 1.5rem;
+}
+
+/* Add vibrant accent colors for headings and links */
+h1, h2, h3, h4, h5, h6 {
+  color: #6C63FF;
+  font-family: 'Poppins', 'Roboto', sans-serif;
+}
+
+a {
+  color: #FF6584;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+a:hover {
+  color: #FFD86E;
+}
+
+/* Add playful button hover effect */
+.MuiButton-root:hover {
+  filter: brightness(1.1) drop-shadow(0 2px 8px #FFD86E);
+}
+
+/* Card shadow and border */
+.MuiCard-root {
+  box-shadow: 0 6px 24px rgba(255,101,132,0.10);
+  border-radius: 24px;
 }

@@ -11,7 +11,9 @@ function Footer() {
         py: 3,
         px: 2,
         mt: 'auto',
-        backgroundColor: (theme) => theme.palette.grey[200],
+        background: 'linear-gradient(90deg, #6C63FF 0%, #FF6584 100%)',
+        color: '#fff',
+        boxShadow: '0 -2px 12px rgba(108,99,255,0.10)',
       }}
     >
       <Container maxWidth="lg">

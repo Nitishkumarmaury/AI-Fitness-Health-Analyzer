@@ -10,7 +10,6 @@ from PIL import Image
 import io
 import json
 from datetime import datetime
-import sqlite3
 from werkzeug.utils import secure_filename
 
 # Import core functionality
@@ -50,22 +49,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Limit uploads to 16MB
 
-# Initialize database
-def init_db():
-    conn = sqlite3.connect('/tmp/fitness_analyzer.db')
-    cursor = conn.cursor()
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS history (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        date TEXT NOT NULL,
-        fitness_data TEXT NOT NULL,
-        analysis_results TEXT NOT NULL,
-        recommendations TEXT NOT NULL
-    )
-    ''')
-    conn.commit()
-    conn.close()
-    logger.info("Database initialized")
+## Database logic removed
 
 
 @app.route('/api/analyze', methods=['POST'])
@@ -187,8 +171,7 @@ def server_error(e):
 
 def main():
     """Run the Flask API server"""
-    # Initialize the database
-    init_db()
+    # No database initialization required
 
 if __name__ == "__main__":
     sys.exit(main())

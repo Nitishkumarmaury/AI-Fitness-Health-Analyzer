@@ -33,19 +33,15 @@ export const AppProvider = ({ children }) => {
 
   // Load data on initial mount
   useEffect(() => {
-    loadHistory();
     loadMetrics();
   }, []);
 
   // Create context value
   const contextValue = {
-    history,
     metrics,
     loading,
     error,
-    lastRefresh,
     refreshData,
-    loadHistory,
     loadMetrics
   };
 

@@ -52,7 +52,7 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Limit uploads to 16MB
 
 # Initialize database
 def init_db():
-    conn = sqlite3.connect('fitness_analyzer.db')
+    conn = sqlite3.connect('/tmp/fitness_analyzer.db')
     cursor = conn.cursor()
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS history (
@@ -67,71 +67,6 @@ def init_db():
     conn.close()
     logger.info("Database initialized")
 
-# Get history from database
-def get_history_from_db():
-    try:
-        conn = sqlite3.connect('fitness_analyzer.db')
-        cursor = conn.cursor()
-        cursor.execute('SELECT id, date, fitness_data, analysis_results, recommendations FROM history ORDER BY id DESC')
-        rows = cursor.fetchall()
-        history_items = []
-        for row in rows:
-            history_items.append({
-                "id": row[0],
-                "date": row[1],
-                "fitness_data": json.loads(row[2]),
-                "analysis_results": json.loads(row[3]),
-                "recommendations": json.loads(row[4])
-            })
-        conn.close()
-        return history_items
-    except Exception as e:
-        logger.error(f"Error retrieving history: {str(e)}")
-        return []
-
-# Add entry to database
-def add_entry_to_db(entry):
-    try:
-        conn = sqlite3.connect('fitness_analyzer.db')
-        cursor = conn.cursor()
-        cursor.execute(
-            'INSERT INTO history (date, fitness_data, analysis_results, recommendations) VALUES (?, ?, ?, ?)',
-            (
-                entry["date"],
-                json.dumps(entry["fitness_data"]),
-                json.dumps(entry["analysis_results"]),
-                json.dumps(entry["recommendations"])
-            )
-        )
-        entry_id = cursor.lastrowid
-        conn.commit()
-        conn.close()
-        return entry_id
-    except Exception as e:
-        logger.error(f"Error adding entry to database: {str(e)}")
-        return None
-
-# Get entry from database
-def get_entry_from_db(entry_id):
-    try:
-        conn = sqlite3.connect('fitness_analyzer.db')
-        cursor = conn.cursor()
-        cursor.execute('SELECT id, date, fitness_data, analysis_results, recommendations FROM history WHERE id = ?', (entry_id,))
-        row = cursor.fetchone()
-        conn.close()
-        
-        if row:
-            return {
-                "id": row[0],
-                "date": row[1],
-                "fitness_data": json.loads(row[2]),
-                "analysis_results": json.loads(row[3]),
-                "recommendations": json.loads(row[4])
-            }
-        return None
-    except Exception as e:
-        logger.error(f"Error retrieving entry from database: {str(e)}")
-        return None
 
 @app.route('/api/analyze', methods=['POST'])
 def analyze_image():
@@ -205,22 +140,13 @@ def analyze_image():
             "recommendations": recommendations
         }
         
-        # Add to database
-        logger.info("Adding entry to database...")
-        entry_id = add_entry_to_db(entry)
-        if entry_id:
-            entry["id"] = entry_id
-        else:
-            logger.error("Failed to add entry to database")
-            return jsonify({'error': 'Failed to save analysis results'}), 500
         
         # Return the results
-        logger.info(f"Analysis completed successfully for entry {entry_id}")
+        logger.info("Analysis completed successfully")
         return jsonify({
             'fitness_data': fitness_data,
             'analysis_results': analysis_results,
-            'recommendations': recommendations,
-            'id': entry_id
+            'recommendations': recommendations
         }), 200
         
     except Exception as e:
@@ -228,57 +154,7 @@ def analyze_image():
         logger.error(traceback.format_exc())
         return jsonify({'error': f'Error analyzing image: {str(e)}'}), 500
 
-@app.route('/api/history', methods=['GET'])
-def get_history():
-    """API endpoint to retrieve analysis history"""
-    logger.info("Retrieving analysis history")
-    history = get_history_from_db()
-    return jsonify(history), 200
 
-@app.route('/api/history/<int:entry_id>', methods=['GET'])
-def get_history_entry(entry_id):
-    """API endpoint to retrieve a specific history entry"""
-    logger.info(f"Retrieving history entry {entry_id}")
-    entry = get_entry_from_db(entry_id)
-    if entry:
-        return jsonify(entry), 200
-    logger.warning(f"Entry not found: {entry_id}")
-    return jsonify({'error': 'Entry not found'}), 404
-
-@app.route('/api/metrics/summary', methods=['GET'])
-def get_metrics_summary():
-    """API endpoint to get summary statistics of user metrics"""
-    logger.info("Retrieving metrics summary")
-    try:
-        history = get_history_from_db()
-        if not history:
-            return jsonify({"message": "No data available yet"}), 200
-        
-        # Extract metrics for analysis
-        steps_data = []
-        calories_data = []
-        distance_data = []
-        
-        for entry in history:
-            fitness_data = entry["fitness_data"]
-            if "steps" in fitness_data:
-                steps_data.append({"date": entry["date"], "value": fitness_data["steps"]})
-            
-            calories = fitness_data.get("calories") or fitness_data.get("total_calories")
-            if calories:
-                calories_data.append({"date": entry["date"], "value": calories})
-            
-            if "distance" in fitness_data:
-                distance_data.append({"date": entry["date"], "value": fitness_data["distance"]})
-        
-        return jsonify({
-            "steps": steps_data,
-            "calories": calories_data,
-            "distance": distance_data
-        }), 200
-    except Exception as e:
-        logger.error(f"Error generating metrics summary: {str(e)}")
-        return jsonify({'error': 'Failed to generate metrics summary'}), 500
 
 # Serve static files from React build
 @app.route('/', defaults={'path': ''})
@@ -313,22 +189,6 @@ def main():
     """Run the Flask API server"""
     # Initialize the database
     init_db()
-    
-    # Make sure the React build folder exists
-    if not os.path.exists(app.static_folder):
-        logger.error(f"React build folder not found at {app.static_folder}")
-        print(f"Error: React build folder not found at {app.static_folder}")
-        print("Please run 'npm run build' in the frontend directory first.")
-        return 1
-        
-    port = int(os.environ.get('PORT', 5000))
-    debug = os.environ.get('FLASK_DEBUG', 'False').lower() in ('true', '1', 't')
-    
-    logger.info(f"Starting server on http://localhost:{port} (debug={debug})")
-    print(f"Starting server on http://localhost:{port}")
-    
-    app.run(host='0.0.0.0', port=port, debug=debug)
-    return 0
 
 if __name__ == "__main__":
     sys.exit(main())
